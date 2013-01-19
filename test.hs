@@ -5,20 +5,12 @@ import Graphics.UI.GLFW as GLFW
 import Sound.Pulse.Simple as P
 
 import Control.Monad
-import Control.Concurrent
 
 vertify :: GLfloat -> GLfloat -> GLfloat -> IO ()
 vertify x y z = vertex $ Vertex3 x y z
 
 colorize :: GLfloat -> GLfloat -> GLfloat -> IO ()
 colorize r g b = color $ Color3 r g b
-
-
-vectorize :: GLfloat -> GLfloat -> GLfloat -> Vector3 GLfloat
-vectorize x y z = Vector3 x y z
-
-rotateW :: GLfloat -> Vector3 GLfloat -> IO ()
-rotateW ang v = rotate ang v
 
 main = do 
   isInitialized <- GLFW.initialize
