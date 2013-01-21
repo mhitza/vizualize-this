@@ -27,15 +27,17 @@ main = do
   pointSize $= 2
   pointSmooth $= Enabled
   soundSource <- P.simpleNew Nothing "X" P.Record Nothing "visualizer" (P.SampleSpec (P.F32 P.LittleEndian) sampleBuffer 2) Nothing Nothing
-  shaderProgram <- loadShader "vertex.s" >>= \vertex -> loadShader "fragment.s" >>= \fragment -> linkShaderProgram [vertex] [fragment]
-  sampleLoop soundSource 1 
+  shaderProgram <- loadShader "vertex.glsl" >>= \vertex -> loadShader "fragment.glsl" >>= \fragment -> linkShaderProgram [vertex] [fragment]
+  currentProgram $= (Just shaderProgram)
+  sampleLoop soundSource 1 0
 
-sampleLoop source count = do
+sampleLoop source count t = do
+  let total = t + 1
   let additiveIterations = 1
   when (count == additiveIterations) $ do clear [ColorBuffer]
   _ <- (P.simpleRead source $ sampleRate :: IO [GLfloat]) >>= renderS >> return ()
   GLFW.swapBuffers
-  sampleLoop source (if count == additiveIterations then 1 else count + 1) 
+  sampleLoop source (if count == additiveIterations then 1 else count + 1)  total
 
 
 rangeX = [-200..0]++[1..200]
