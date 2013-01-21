@@ -63,7 +63,21 @@ squareDrawR (w, h, x, y) samples = do
       -- let positions' = nub . map (positions !!) . take 20 $ randomRs (0,40) rGen
       mapM_ (\(x,y) -> drawSquare ((w/div, h/div, x, y)) sample) $ take 40 positions
 
+continuationDraw _ _ _ [] = return ()
+continuationDraw (x,y) d m (sample:samples) =
+  let m' | m < sample = sample | otherwise = m
+      x' = (x + sample)/10
+      y' = (y + sample)/10
+  in do
+    colorize (sin m' / 3.14 ) (let g = cos x' / 2 in if x' > 0.0 then 0.0 else g) (let b = sin x' / 2 in if x' < 0.0 then 0.0 else x')
+    case d of 1 -> vertify (x) (y + sin sample) 0.0
+              2 -> vertify (x + sin sample) (y) 0.0
+              3 -> vertify (x) (y - sin sample) 0.0
+    let d' | d == 3 = 1 | otherwise = d + 1
+    continuationDraw (x', y') d' m' samples
+  
 renderS sampleS = do 
-  rGen <- newStdGen
-  renderPrimitive LineStrip $ squareDrawR (2.0, 2.0, 0.0, 0.0) (zip sampleS (randomRs (0,100) rGen))
+  -- rGen <- newStdGen
+  -- renderPrimitive LineStrip $ squareDrawR (2.0, 2.0, 0.0, 0.0) (zip sampleS (randomRs (0,100) rGen))
+  renderPrimitive Lines $ continuationDraw (0.0, 0.0) 1 0.0 sampleS
   return ()
