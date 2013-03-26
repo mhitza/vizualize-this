@@ -41,7 +41,7 @@ sampleLoop source count t = do
   sampleLoop source (if count == additiveIterations then 1 else count + 1)  total
 
 
-rangeX = [-200..0]++[1..200]
+rangeX = [-400..0]++[1..400]
 
 drawSquare = \(width, height, posX, posY) (sample, random) -> do
     colorize (sin sample) 0.0 0.0
@@ -61,7 +61,7 @@ squareDrawR (w, h, x, y) samples = do
 
     let positions = concatMap
           (\d -> [((x - w/d), (y + h/d)),((x - w/d),(y - h/d)),((x + w/d),(y - h/d)),((x + w/d),(y + h/d))])
-          $ iterateP 2 4
+          $ iterateM 2 4
     forM_ (zip samples (iterate (+1) 2)) $ \(sample@(_,r), div) -> do
       rGen <- newStdGen
       let positions' = nub . map (positions !!) . take 20 $ randomRs (0,40) rGen
@@ -90,6 +90,10 @@ renderS count sampleS = do
                   uniform cl $= Index1 (count :: GLfloat)
                   return ()
   rGen <- newStdGen
-  renderPrimitive Quads $ squareDrawR (2.0, 2.0, 0.0, 0.0) (zip sampleS (randomRs (0,100) rGen))
-  --renderPrimitive LineStrip $ continuationDraw (0.0, 0.0) 1 0.0 sampleS
+  --renderPrimitive Quads $ squareDrawR (2.0, 2.0, 0.0, 0.0) (zip sampleS (randomRs (0,100) rGen))
+  renderPrimitive LineStrip $ continuationDraw (0.0, 0.0) 1 0.0 sampleS
+  --renderPrimitive LineStrip $ forM (zip sampleS rangeX) $ \(sample, x) -> do
+  --  colorize 1.0 0.0 0.0
+  --  vertify (x/400) (sin sample) 0.0
+
   return ()
