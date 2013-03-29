@@ -1,3 +1,7 @@
-*.hi
-*.o
-test
+# Temporary Files
+*~
+.*.swp
+
+# Cabal / Haskell Files
+cabal-dev
+dist
