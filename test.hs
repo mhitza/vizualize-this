@@ -16,8 +16,11 @@ vertify x y z = vertex $ Vertex3 x y z
 colorize :: GLfloat -> GLfloat -> GLfloat -> IO ()
 colorize r g b = color $ Color3 r g b
 
+iterateP x = iterate (+x)
+iterateM x = iterate (*x)
+
 sampleRate = 800
-sampleBuffer = round . head . dropWhile (((fromIntegral sampleRate) * 5.12) >) $ iterate (*2) 2
+sampleBuffer = round . head . dropWhile ((fromIntegral sampleRate * 5.12) >) $ iterateM 2 2
 
 main = do 
   isInitialized <- GLFW.initialize
@@ -39,7 +42,7 @@ sampleLoop source count t = do
   let total = t + 1
   let additiveIterations = 1
   when (count == additiveIterations) $ clear [ColorBuffer]
-  renderS total =<< (P.simpleRead source $ sampleRate :: IO [GLfloat])
+  renderS total =<< (P.simpleRead source sampleRate :: IO [GLfloat])
   GLFW.swapBuffers
   sampleLoop source (if count == additiveIterations then 1 else count + 1)  total
 
@@ -57,8 +60,6 @@ squareDrawR :: (GLfloat, GLfloat, GLfloat, GLfloat) -> [(GLfloat, GLfloat)] -> I
 squareDrawR _ [] = return ()
 squareDrawR (w, h, x, y) samples = do
     rGen <- newStdGen
-    let iterateP x y = iterate (+x) y
-    let iterateM x y = iterate (*x) y
     let iterateR x y = randomRs(x,y) rGen
     let iterateF     = unfoldr (\(a,b) -> Just (a,(b,a+b))) (0,1)
 
@@ -70,7 +71,7 @@ squareDrawR (w, h, x, y) samples = do
             (x + w / d, y + h / d)
             ])
           $ iterateM 2 4
-    forM_ (zip samples (iterate (+1) 2)) $ \(sample@(_,r), div) -> do
+    forM_ (zip samples (iterateP 1 2)) $ \(sample@(_,r), div) -> do
       rGen <- newStdGen
       let positions' = nub . map (positions !!) . take 20 $ randomRs (0,40) rGen
       mapM_ (\(x,y) -> drawSquare (w / div, h / div, x, y) sample) $ take 20 positions
