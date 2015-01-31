@@ -33,14 +33,7 @@ main = do
   pointSize $= 2
   pointSmooth $= Enabled
   soundSource <- P.simpleNew Nothing "X" P.Record Nothing "visualizer" (P.SampleSpec (P.F32 P.LittleEndian) sampleBuffer 2) Nothing Nothing
-  shaderProgram <- loadShaderProgram "vertex.glsl" "fragment.glsl"
-  currentProgram $= Just shaderProgram
   sampleLoop soundSource 1 0
-
-loadShaderProgram vertexShader fragmentShader = do
-   vertex <- loadShader vertexShader
-   fragment <- loadShader fragmentShader
-   linkShaderProgram [vertex] [fragment]
 
 sampleLoop source count t = do
   let total = t + 1
