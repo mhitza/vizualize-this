@@ -17,10 +17,10 @@ cabal-version:       >=1.8
 executable vizualize-this
   main-is:             test.hs
   build-depends:       
-      base ==4.5.*,
-      random == 1.0.1.*,
-      time == 1.4.0.*,
+      base >=4.5 && <=4.8,
+      random >= 1.0,
+      time >= 1.4,
       pulse-simple == 0.1.14,
-      GLFW == 0.5.1.*,
-      GLUtil == 0.3.*,
-      OpenGL == 2.8.0.*
+      GLFW >= 0.5,
+      GLUtil >= 0.3,
+      OpenGL >= 2.8
